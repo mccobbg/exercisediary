@@ -47,42 +47,44 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         {workouts.length > 0 ? (
           <div className="space-y-4">
             {workouts.map((workout) => (
-              <Card key={workout.id}>
-                <CardHeader>
-                  <CardTitle>{workout.name}</CardTitle>
-                  <CardDescription>
-                    {workout.completedAt
-                      ? `Completed at ${new Date(workout.completedAt).toLocaleTimeString()}`
-                      : 'In progress'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {workout.workoutExercises.length > 0 ? (
-                    <div className="space-y-4">
-                      {workout.workoutExercises.map((workoutExercise) => (
-                        <div key={workoutExercise.id} className="border-l-2 border-muted pl-4">
-                          <h3 className="font-medium mb-2">{workoutExercise.exercise.name}</h3>
-                          {workoutExercise.sets.length > 0 ? (
-                            <div className="space-y-1">
-                              {workoutExercise.sets.map((set) => (
-                                <div key={set.id} className="text-sm text-muted-foreground">
-                                  Set {set.setNumber}:
-                                  {set.weight && ` ${set.weight} kg`}
-                                  {set.reps && ` × ${set.reps} reps`}
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-sm text-muted-foreground">No sets recorded</p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No exercises in this workout</p>
-                  )}
-                </CardContent>
-              </Card>
+              <Link key={workout.id} href={`/dashboard/workout/${workout.id}`}>
+                <Card className="cursor-pointer transition-colors hover:bg-muted/50">
+                  <CardHeader>
+                    <CardTitle>{workout.name}</CardTitle>
+                    <CardDescription>
+                      {workout.completedAt
+                        ? `Completed at ${new Date(workout.completedAt).toLocaleTimeString()}`
+                        : 'In progress'}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {workout.workoutExercises.length > 0 ? (
+                      <div className="space-y-4">
+                        {workout.workoutExercises.map((workoutExercise) => (
+                          <div key={workoutExercise.id} className="border-l-2 border-muted pl-4">
+                            <h3 className="font-medium mb-2">{workoutExercise.exercise.name}</h3>
+                            {workoutExercise.sets.length > 0 ? (
+                              <div className="space-y-1">
+                                {workoutExercise.sets.map((set) => (
+                                  <div key={set.id} className="text-sm text-muted-foreground">
+                                    Set {set.setNumber}:
+                                    {set.weight && ` ${set.weight} kg`}
+                                    {set.reps && ` × ${set.reps} reps`}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground">No sets recorded</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No exercises in this workout</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         ) : (
