@@ -22,7 +22,8 @@
       "Bash(git fetch:*)",
       "Bash(git push:*)",
       "mcp__neon__describe_project",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(ssh-add:*)"
     ],
     "deny": [],
     "ask": []
