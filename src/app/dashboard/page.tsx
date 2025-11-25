@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { DateSelector } from '@/components/date-selector';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { formatDate } from '@/lib/date-utils';
 import { getUserWorkoutsForDate } from '@/data/user-workouts';
 
@@ -22,7 +24,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     <div className="container mx-auto p-6 max-w-4xl">
       {/* Header with Date Picker */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">Workout Dashboard</h1>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold">Workout Dashboard</h1>
+          <Link href="/dashboard/workout/new">
+            <Button>New Workout</Button>
+          </Link>
+        </div>
 
         <div className="flex items-center gap-4">
           <Suspense fallback={<div className="w-[280px] h-10 bg-muted animate-pulse rounded-md" />}>
