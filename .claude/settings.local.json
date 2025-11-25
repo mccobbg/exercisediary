@@ -20,7 +20,8 @@
       "Bash(git commit:*)",
       "Bash(git merge:*)",
       "Bash(git fetch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "mcp__neon__describe_project"
     ],
     "deny": [],
     "ask": []
