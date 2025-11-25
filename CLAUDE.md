@@ -2,6 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ CRITICAL: Documentation-First Development
+
+**BEFORE generating ANY code, you MUST:**
+1. **Check the `/docs` directory** for relevant documentation files
+2. **Read and understand** the appropriate documentation for the technology/feature you're implementing
+3. **Follow the patterns and best practices** outlined in those docs
+4. **Reference the documentation** when making architectural decisions
+
+The `/docs` directory contains authoritative reference material for all major technologies and features used in this project. Consulting these docs FIRST ensures consistency, correctness, and adherence to current best practices:
+
+- /docs/ui.md
+- /docs/data-fetching.md
+
+**Never generate code without first consulting the relevant documentation.**
+
 ## Project Overview
 
 Exercise Diary is a Next.js 16 application built with React 19, TypeScript, and Tailwind CSS 4. The project uses the Next.js App Router architecture with TypeScript strict mode enabled.
