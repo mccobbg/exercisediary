@@ -16,6 +16,7 @@ The `/docs` directory contains authoritative reference material for all major te
 - /docs/data-fetching.md
 - /docs/data-mutations.md
 - /docs/auth.md
+- /docs/routing.md
 
 **Never generate code without first consulting the relevant documentation.**
 

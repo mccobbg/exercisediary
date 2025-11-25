@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { workouts, workoutExercises, exercises, sets } from '@/db/schema';
+import { workouts } from '@/db/schema';
 import { eq, and, gte, lt } from 'drizzle-orm';
 import { auth } from '@clerk/nextjs/server';
 
@@ -44,4 +44,38 @@ export async function getUserWorkoutsForDate(date: Date) {
   });
 
   return userWorkouts;
+}
+
+/**
+ * Fetches a single workout by ID for the authenticated user
+ * @param workoutId - The ID of the workout to fetch
+ * @returns The workout with all exercises and sets, or null if not found
+ */
+export async function getUserWorkoutById(workoutId: string) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error('Unauthorized');
+  }
+
+  // Fetch workout with all related data
+  const workout = await db.query.workouts.findFirst({
+    where: and(
+      eq(workouts.id, workoutId),
+      eq(workouts.userId, userId)
+    ),
+    with: {
+      workoutExercises: {
+        orderBy: (workoutExercises, { asc }) => [asc(workoutExercises.order)],
+        with: {
+          exercise: true,
+          sets: {
+            orderBy: (sets, { asc }) => [asc(sets.setNumber)],
+          },
+        },
+      },
+    },
+  });
+
+  return workout;
 }

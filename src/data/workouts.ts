@@ -80,3 +80,103 @@ export async function createWorkout(data: CreateWorkoutData) {
 
   return workout;
 }
+
+type UpdateWorkoutData = {
+  id: string;
+  name: string;
+  startedAt: Date;
+  completedAt?: Date | null;
+  exercises: Array<{
+    name: string;
+    sets: Array<{
+      weight?: number;
+      reps?: number;
+    }>;
+  }>;
+};
+
+/**
+ * Updates an existing workout with exercises and sets for the authenticated user
+ * @param data - Updated workout data including name, start time, exercises, and sets
+ * @returns The updated workout
+ */
+export async function updateWorkout(data: UpdateWorkoutData) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error('Unauthorized');
+  }
+
+  // Verify workout ownership
+  const existingWorkout = await db.query.workouts.findFirst({
+    where: eq(workouts.id, data.id),
+  });
+
+  if (!existingWorkout) {
+    throw new Error('Workout not found');
+  }
+
+  if (existingWorkout.userId !== userId) {
+    throw new Error('Unauthorized: Cannot update another user\'s workout');
+  }
+
+  // Update the workout
+  const [updatedWorkout] = await db
+    .update(workouts)
+    .set({
+      name: data.name,
+      startedAt: data.startedAt,
+      completedAt: data.completedAt,
+      updatedAt: new Date(),
+    })
+    .where(eq(workouts.id, data.id))
+    .returning();
+
+  // Delete existing workout exercises and sets (cascade will handle sets)
+  await db
+    .delete(workoutExercises)
+    .where(eq(workoutExercises.workoutId, data.id));
+
+  // Re-create exercises and sets with new data
+  for (let i = 0; i < data.exercises.length; i++) {
+    const exerciseData = data.exercises[i];
+
+    // Check if exercise exists in the library, if not create it
+    let exercise = await db.query.exercises.findFirst({
+      where: eq(exercises.name, exerciseData.name),
+    });
+
+    if (!exercise) {
+      [exercise] = await db
+        .insert(exercises)
+        .values({
+          name: exerciseData.name,
+        })
+        .returning();
+    }
+
+    // Link exercise to workout
+    const [workoutExercise] = await db
+      .insert(workoutExercises)
+      .values({
+        workoutId: updatedWorkout.id,
+        exerciseId: exercise.id,
+        order: i,
+      })
+      .returning();
+
+    // Create sets for this exercise
+    if (exerciseData.sets.length > 0) {
+      await db.insert(sets).values(
+        exerciseData.sets.map((set, setIndex) => ({
+          workoutExerciseId: workoutExercise.id,
+          setNumber: setIndex + 1,
+          weight: set.weight?.toString(),
+          reps: set.reps,
+        }))
+      );
+    }
+  }
+
+  return updatedWorkout;
+}
